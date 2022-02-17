@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>26 - Code structuring</title>
+</head>
+<body>
+    <canvas class="webgl"></canvas>
+    <!-- CREATE MENU -->
+    <div  id="createTowerDiv" class="popupdiv">
+        <h2 style="text-align : center;">Create Tower ?</h2>
+        <div style="display:flex;  align-items: center; justify-content: center;">
+            <button class="buttonYesNo buttonyes" id="buttonyes">Yes</button>
+            <div style="width : 5%"></div>
+            <button class="buttonYesNo buttonno" id="buttonno" >No</button>
+        </div>
+    </div>
+    <!-- TOWER INFO MENU -->
+    <div  id="TowerInfoDiv" class="popupdiv">
+        <h2 style="text-align : center;">Selected Tower Info</h2>
+        <p>Position : <span id="posXinfo">NULL</span> / <span id="posZinfo" >NULL</span></p>
+        </br>
+        <div style="display:flex;  align-items: center; justify-content: center;">
+            <button class="buttonYesNo buttonno" id="buttondelete" >Delete Tower</button>
+            <div style="width : 5%"></div>
+            <button class="buttonYesNo buttonyes" id="buttonclose">Close</button>
+        </div>
+    </div>
+</body>
+</html>
