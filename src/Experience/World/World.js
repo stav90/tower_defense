@@ -28,11 +28,10 @@ export default class World {
             this.map = new Map(this.clickableObjs)
             // this.createTowerMesh()
             this.spawnManager = new SpawnManager()
-
+            this.cube = new Cube()
             this.tower = new Tower(this.spawnManager)
-            this.tower_mesh = this.tower.tower_mesh
             this.towerManager = new TowerManager(this.spawnManager);
-            this.cursor = new Cursor(this.clickableObjs, this.towerManager, this.cursorValid, this.tower_mesh)
+            this.cursor = new Cursor(this.clickableObjs, this.towerManager, this.cursorValid, this.tower)
             // this.obstacles = new Obstacles()
               
             this.environment = new Environment()
@@ -47,7 +46,7 @@ export default class World {
         if( this.spawnManager){
             this.spawnManager.update()
             this.towerManager.update(this.time.delta)
-            this.tower.update()
+            this.tower.update(this.time.delta)
             
         }
         

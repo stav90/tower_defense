@@ -14,7 +14,7 @@ import gsap from 'gsap'
         this.newTowerMeshToCreate = undefined;
         this.selectedTower = undefined;
 
-        this.character = spawnManager
+        this.spawnManager = spawnManager
 
         this.waveOfMonsters = spawnManager.waveOfMonsters
        
@@ -24,8 +24,12 @@ import gsap from 'gsap'
 
         this.setGeometry()
         this.setTextures()
-        this.setMaterial()
-        this.setMesh()
+        // this.setMaterial()
+        // this.setMesh()
+        this.getMonsters()
+    }
+    getMonsters() {
+        // console.log('this.waveOfMonsters', this.waveOfMonsters)
     }
     setGeometry() {
         this.geometry = new THREE.BoxGeometry( 1, 3, 1 );
@@ -35,20 +39,39 @@ import gsap from 'gsap'
     setTextures() {
  
     }
-    setMaterial() {
-        this.material = new THREE.MeshStandardMaterial({ color : 0xc0392b})
-    }
-    setMesh() {
-        this.mesh = new THREE.Mesh(this.geometry, this.material)
-        this.mesh.receiveShadow = true
-        // this.scene.add(this.mesh)
-    }
+    // setMaterial() {
+    //     this.material = new THREE.MeshStandardMaterial({ color : 0xc0392b})
+    // }
+    // setMesh() {
+    //     this.mesh = new THREE.Mesh(this.geometry, this.material)
+    //     this.mesh.receiveShadow = true
+    //     // this.scene.add(this.mesh)
+    // }
 
     addTower(newtowermesh) {
-        var newtower = new Tower();
+        var newtower = new Tower( this.spawnManager);
         newtower.mesh = newtowermesh;
+        
+        this.setUpTurret(newtower)
+        // console.log(newtower)
         this.towerArray.push(newtower);
 
+    }
+    setUpTurret(newtower){
+        const textureLoader = new THREE.TextureLoader()
+        const muzzleTexture = textureLoader.load( '/textures/muzzle.png' );
+		const muzzleMaterial = new THREE.SpriteMaterial( { map: muzzleTexture } );
+		newtower.muzzle = new THREE.Sprite( muzzleMaterial );
+        newtower.muzzle.position.y = .6
+        newtower.muzzle.position.z = 2.5
+        newtower.muzzle.scale.set(1.5,1.5,1.5)
+        newtower.muzzle.visible = false
+        newtower.mesh.traverse((child) => {
+            if(child.name === 'Turret'){
+                newtower.turret = child
+                child.add(newtower.muzzle)
+            }
+        })
     }
 
     deleteTower(TowerObj) {
@@ -71,77 +94,87 @@ import gsap from 'gsap'
         }
         return null;
     }
+    rotateMuzzle = async(muzzle) =>{
+        muzzle.visible = true
+        gsap.to(muzzle.material, {duration: .1, opacity: 1})
+        muzzle.material.opacity = 1 
+        muzzle.material.rotation = Math.random() * Math.PI;  
+      
+        // console.log(muzzle.material.opacity)
+    }
+    turnOffMuzzle(muzzle) {
+    //   console.log(muzzle.material.opacity)
+        // muzzle.material.opacity = 0
+      gsap.to(muzzle.material, {duration: .1,opacity: 0})
+    
+    }
 
     getDistanceToEnemy = async() => {
-        // console.log("character",this.character.healthBarMaterial)
+        // let EnemyInFiringRange = false
         for(var i = 0 ; i < this.towerArray.length ; i++ ){ //loop through all the towers
             for(var j = 0 ; j < this.waveOfMonsters.length ; j++ ){// loop through all the monsters
 
                 this.towerArray[i].distance = this.towerArray[i].mesh.position.distanceTo(this.waveOfMonsters[j].mesh.position);//character Vector
-
+                //  console.log('distance',this.towerArray[0].distance)
                 if(this.towerArray[i].distance < 2.5){
+                    // EnemyInFiringRange = true
+                   
                     this.towerArray[i].mesh.traverse((child) => {
                         if(child.name === 'Turret'){
                             child.lookAt(this.waveOfMonsters[j].mesh.position.x, 2.6 , this.waveOfMonsters[j].mesh.position.z )
-                            this.getDir(child)
+                            // this.getDir(child)
                         }
                     })
+                    this.rotateMuzzle(this.towerArray[i].muzzle)
                     this.waveOfMonsters[j].health -= .005
- 
-                    this.createBullets()
-                 }
+                    // this.createBullets()
+                }else {
+                    this.turnOffMuzzle(this.towerArray[i].muzzle)
+                }
+                 
             }
-
-
-            // this.towerArray[i].mesh.traverse((child) => {
-            //     if(child.name === 'Turret'){
-            //         child.lookAt(this.character.model.position.x, 2.6 , this.character.model.position.z  )
-            //         this.getDir(child)
-            //     }
-            // })
-           
-            
+  
         }
     }
 
-    getDir(turret){
-        const objectsWorldPosition = new THREE.Vector3()
-        this.pos = turret.getWorldPosition(objectsWorldPosition)
-        this.pos.y += .3
+    
+    // getDir(turret){
+    //     const objectsWorldPosition = new THREE.Vector3()
+    //     this.pos = turret.getWorldPosition(objectsWorldPosition)
+    //     this.pos.y += .3
 
-        const objectsWorldQuaternion = new THREE.Quaternion
-        this.quat = turret.getWorldQuaternion(objectsWorldQuaternion)
+    //     const objectsWorldQuaternion = new THREE.Quaternion
+    //     this.quat = turret.getWorldQuaternion(objectsWorldQuaternion)
      
 
-        const objectsWorldirection = new THREE.Vector3()
-        this.direction = turret.getWorldDirection(objectsWorldirection)
-    }
+    //     const objectsWorldirection = new THREE.Vector3()
+    //     this.direction = turret.getWorldDirection(objectsWorldirection)
+    // }
 
-    createBullets = async() =>{
+    // createBullets = async() =>{
        
-        let plasmaBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 4), new THREE.MeshBasicMaterial({color: 'black'}));
-        plasmaBall.scale.set(.2, .2, .2)
-        plasmaBall.position.copy(this.pos); // start position - the tip of the weapon
-        plasmaBall.quaternion.copy(this.quat); // apply towers quaternion
-        this.scene.add(plasmaBall);
-        this.plasmaBalls.push(plasmaBall);
-    }
+    //     let plasmaBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 4), new THREE.MeshBasicMaterial({color: 'black'}));
+    //     plasmaBall.scale.set(.2, .2, .2)
+    //     plasmaBall.position.copy(this.pos); // start position - the tip of the weapon
+    //     plasmaBall.quaternion.copy(this.quat); // apply towers quaternion
+    //     this.scene.add(plasmaBall);
+    //     this.plasmaBalls.push(plasmaBall);
+    // }
 
     pause(ms) { 
         return new Promise(resolve => setTimeout(resolve, ms))
     };
+  
     update = async(delta) =>{
         if(this.towerArray.length > 0){
             this.getDistanceToEnemy()
             
-            if(this.plasmaBalls.length > 0){
-                this.plasmaBalls.forEach((b) => {
-                    b.translateZ(50 * delta * .0005);
-                    // setTimeout(() => {
-                    //     // b.visible = false
-                    // }, 50);
-                });   
-            }
+            // if(this.plasmaBalls.length > 0){
+            //     this.plasmaBalls.forEach((b) => {
+            //         b.translateZ(50 * delta * .0005);
+
+            //     });   
+            // }
         }
         
     }

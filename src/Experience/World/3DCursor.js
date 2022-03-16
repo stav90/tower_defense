@@ -12,7 +12,7 @@ import {createTowerGui_open, createTowerGui_close , infoTowerGui_open, infoTower
         this.clickableObjs = clickableObjects
         this.towerManager = towerManager
         this.cursorValid = cursorValid
-        this.towerMesh = towerMesh
+        this.towerMesh = towerMesh.tower_mesh
 
         this.resource = this.resources.items.target
         // console.log(this.resource)

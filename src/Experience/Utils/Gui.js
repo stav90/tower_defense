@@ -2,7 +2,6 @@ import gsap from 'gsap'
 
 export function createTowerGui_open()
 {   
-   
     document.getElementById("createTowerDiv").style.display = "block";
 }
 export function createTowerGui_close()

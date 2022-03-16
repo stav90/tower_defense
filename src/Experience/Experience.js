@@ -34,9 +34,10 @@ export default class Experience
         this.camera = new Camera()
         this.renderer = new Renderer()
         this.world = new World()
-
-
-    
+        
+        
+        this.setUpGUI()
+        // this.points = []
 
         //Sizes resize event
         this.sizes.on('resize', () => {
@@ -47,6 +48,23 @@ export default class Experience
             this.update()
         })
     }
+    setUpGUI(){
+       this.points = [
+        {
+            position: new THREE.Vector3(6, 7, -6),
+            element: document.querySelector('.point-0')
+        },
+        {
+            position: new THREE.Vector3(8, 7, -8),
+            element: document.querySelector('.point-1')
+        },
+        {
+            position: new THREE.Vector3(-4, 1, -10),
+            element: document.querySelector('.point-2')
+        }
+        ]
+    }
+
 
     resize() {
         this.camera.resize()
@@ -59,6 +77,18 @@ export default class Experience
         this.camera.update()
         this.world.update()
         this.renderer.update()
+     
+          // Go through each point
+        for(const point of this.points)
+        {
+  
+            const screenPosition = point.position.clone()
+            screenPosition.project(this.camera.instance)
+            // console.log(screenPosition.x)
+            const translateX = screenPosition.x * this.sizes.width * 0.5
+            const translateY = - screenPosition.y * this.sizes.height * 0.5
+            point.element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`
+        }
 
     }
 }

@@ -12,10 +12,19 @@ import fragmentShader from '../../shaders/healthShader/fragment.glsl'
         this.model = this.resources.items[monster]//entire model object
         this.mesh = this.model.scene
         this.health = 1
+        this.pathTimeline = null
         this.setAnimation()
         this.createHealthBar()
+        this.setModelPosition()
       
     }
+    setModelPosition() {
+        this.mesh.position.y = .8
+        this.mesh.position.x = -8
+        this.mesh.position.z = -10 
+    }
+
+    //x: 6, z: 8,
     createHealthBar() {
         const uniforms = {
             colour: {

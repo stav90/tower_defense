@@ -61,6 +61,16 @@ export default [
         name: 'cyclops',
         type: 'gltfModel',
         path: '/models/Monsters/Cyclops.gltf'
+    },
+    {
+        name: 'heart',
+        type: 'gltfModel',
+        path: '/models/UI/heart.gltf'
+    },
+    {
+        name: 'coin',
+        type: 'gltfModel',
+        path: '/models/UI/coin.gltf'
     }
 ]
 
